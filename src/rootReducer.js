@@ -1,6 +1,8 @@
 import {combineReducers} from 'redux';
-import common from './service/reducer';
+import category from './Store/Reducers/categoryReducer';
+import toDo from './Store/Reducers/toDoReducer';
 
 export default combineReducers({
-    common
+    category,
+    toDo
 });

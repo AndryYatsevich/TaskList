@@ -1,6 +1,12 @@
 import React from 'react';
+import {getAllTasks} from '../../Store/Actions/toDoAction';
+import {connect} from 'react-redux';
 
 class TaskList extends React.Component {
+
+    componentDidMount () {
+        this.props.getAllTasks();
+    }
     
     renderTaskList = (tasks) => {tasks && tasks.map((el) => {
         console.log('sdf', el);
@@ -8,28 +14,6 @@ class TaskList extends React.Component {
     })}
 
     render () {
-        const tasks = [
-            {
-                id: 1,
-                value: "ToDo Item 1"
-            },
-            {
-                id: 2,
-                value: "ToDo Item 2"
-            },
-            {
-                id: 3,
-                value: "ToDo Item 3"
-            },
-            {
-                id: 4,
-                value: "ToDo Item 4"
-            },
-            {
-                id: 5,
-                value: "ToDo Item 5"
-            },
-        ]
         return (
             <div>
                 <div className="header">
@@ -40,7 +24,7 @@ class TaskList extends React.Component {
                 </div>
                 <div className="task-list">
                     <ul>
-                        {this.renderTaskList(tasks)}
+                        {this.renderTaskList()}
                     </ul>
                 </div>
             </div>
@@ -48,4 +32,10 @@ class TaskList extends React.Component {
     }
 }
 
-export default TaskList;
+const mapStateToProps = (state) => ({
+    tasks: state.tasks
+});
+
+export default connect(mapStateToProps, {
+    getAllTasks
+})(TaskList);
