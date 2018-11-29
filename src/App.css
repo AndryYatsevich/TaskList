@@ -49,3 +49,7 @@ button {
 .content {
   width: 60%;
 }
+
+.done {
+  text-decoration: line-through;
+}

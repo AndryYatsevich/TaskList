@@ -9,7 +9,7 @@ class Category extends React.Component {
     }
     
     render () {
-        
+        const {category} = this.props;
         return (
             <div>
                 <div className="header">
@@ -17,7 +17,9 @@ class Category extends React.Component {
                     <button>Add</button>
                 </div>
                 <div className="category-content">
-                    
+                    {category && category.map((el) => {
+                        return <div key={el.id}>{el.name}</div>
+                    })}
                 </div>
             </div>
         )
