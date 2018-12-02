@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import './index.styl';
 import Category from './Conteiners/Category';
 import TaskList from './Conteiners/TaskList';
 

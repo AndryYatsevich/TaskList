@@ -1,7 +1,6 @@
 import React from 'react';
 import {getAllTasks} from '../../Store/Actions/toDoAction';
 import {connect} from 'react-redux';
-import Task from '../../Components/task';
 
 class TaskList extends React.Component {
     constructor(props) {
