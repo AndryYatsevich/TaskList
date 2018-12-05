@@ -1,6 +1,7 @@
 import React from 'react';
-import {getAllTasks} from '../../Store/Actions/toDoAction';
+import {getAllTasks, addNewTask, deleteTask, updateTask} from '../../Store/Actions/toDoAction';
 import {connect} from 'react-redux';
+import style from './style.styl';
 
 class TaskList extends React.Component {
     constructor(props) {
@@ -28,8 +29,11 @@ class TaskList extends React.Component {
             body: JSON.stringify({
                 text: this.state.newTaskName
             })
+        }).then((response) => {
+            return response.text().then((task) => {
+                this.props.addNewTask(task);
+            });
         });
-        await this.props.getAllTasks();
     }
 
     taskDone = async(e) => {
@@ -41,19 +45,24 @@ class TaskList extends React.Component {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(currentTask[0])
+        }).then((response) => {
+            return response.text().then((task) => {     
+                return this.props.updateTask(JSON.parse(task));    
+            });
         });
-        await this.props.getAllTasks();
     }
 
     deleteTask = async(e) => {
-        await fetch('http://localhost:3000/task/' + e.target.id, {
+        let id = e.target.id;
+        await fetch('http://localhost:3000/task/' + id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
             }
-        });
-        await this.props.getAllTasks();
+        })
+        await this.props.deleteTask(id);
     }
+
 
     render () {
         return (
@@ -67,11 +76,23 @@ class TaskList extends React.Component {
                 <div className="task-list">
                     <ul>
                         {this.props.tasks && this.props.tasks.map((el) => {
-                            return <li key={el.id} className={el.done? 'done' : ''}>
-                                        <input id={el.id} key={el.id} onChange={this.taskDone} type='checkbox'></input>
-                                        {el.text}
-                                        <button>Редактировать</button>
-                                        <button id={el.id} onClick={this.deleteTask}>Удалить</button>
+                            return <li key={el.id} className={el.done? style.done : ''}>
+                                        <div className={style.listItem}>
+                                            <div>
+                                                <input id={el.id} 
+                                                    key={el.id} 
+                                                    onChange={this.taskDone} 
+                                                    type='checkbox' 
+                                                />
+                                            </div>
+                                            <div className={style.taskText}>
+                                                {el.text}
+                                            </div>
+                                            <div className={style.taskBtn}>
+                                                <button>Редактировать</button>
+                                                <button id={el.id} onClick={this.deleteTask}>Удалить</button>
+                                            </div>
+                                        </div>
                                     </li>
                         })}
                     </ul>
@@ -86,5 +107,8 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-    getAllTasks
+    getAllTasks,
+    addNewTask,
+    deleteTask,
+    updateTask
 })(TaskList);
