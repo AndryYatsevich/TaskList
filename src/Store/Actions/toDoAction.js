@@ -16,6 +16,22 @@ export const getAllTasks = () => (dispatch) => {
     })
 }
 
+export const getSearchTasks = (name, done) => (dispatch) => {
+    fetch('http://localhost:3000/task?text_like=' + name + '&done=' + done, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then((response) => {
+        return response.text().then((tasks) => {
+            dispatch({
+                type: constants.GET_ALL_TASKS,
+                payload: tasks
+            });
+        });
+    })
+}
+
 export const addNewTask = (task) => (dispatch) => {
     dispatch({
         type: constants.ADD_NEW_TASK,
