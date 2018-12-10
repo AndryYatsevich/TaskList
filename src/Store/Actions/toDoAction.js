@@ -33,22 +33,51 @@ export const getSearchTasks = (name, done) => (dispatch) => {
 }
 
 export const addNewTask = (task) => (dispatch) => {
-    dispatch({
-        type: constants.ADD_NEW_TASK,
-        payload: task
-    });
+    fetch('http://localhost:3000/task', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: task
+        }).then((response) => {
+            return response.text().then((task) => {                            
+                dispatch({
+                    type: constants.ADD_NEW_TASK,
+                    payload: task
+                });
+            });
+        })
 }
 
 export const deleteTask = (taskId) => (dispatch) => {
-    dispatch({
-        type: constants.DELETE_TASK,
-        payload: taskId
-    });
+    fetch('http://localhost:3000/task/' + taskId, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(()=> {
+            dispatch({
+                type: constants.DELETE_TASK,
+                payload: taskId
+            });
+        })
+    
 }
 
-export const updateTask = (tasks) => (dispatch) => {
-    dispatch({
-        type: constants.UPDATE_TASK,
-        payload: tasks
-    });
+export const updateTask = (id, task) => (dispatch) => {
+    fetch('http://localhost:3000/task/' + id, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: task
+        }).then((response) => {
+            return response.text().then((task) => {     
+                dispatch({
+                    type: constants.UPDATE_TASK,
+                    payload: task
+                });   
+            });
+        });
+    
 }

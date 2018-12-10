@@ -7,6 +7,10 @@
   height: 40vmin;
 }
 
+body {
+  background-color: #E0D4AE;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -38,7 +42,7 @@ input {
 
 button {
   padding: 6px 20px;
-  margin: 20px;
+  margin: 0px 10px;
   border-radius: 6px;
 }
 
