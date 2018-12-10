@@ -8,7 +8,9 @@
 }
 
 body {
-  background-color: #E0D4AE;
+  background-image: url(img/samye_krasivye_mesta_24.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .App-header {

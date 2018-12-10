@@ -2,6 +2,7 @@ import React from 'react';
 import {getAllTasks, addNewTask, deleteTask, updateTask, getSearchTasks} from '../../Store/Actions/toDoAction';
 import {connect} from 'react-redux';
 import style from './style.styl';
+import Input from '../../Components/input';
 
 class TaskList extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ class TaskList extends React.Component {
     }
 
     onChangeSearch = (e) => {
+        console.log(e.target.value);
         this.setState({
             search: e.target.value
         });
@@ -62,12 +64,12 @@ class TaskList extends React.Component {
         <div className={style.listItem}>
             <div className={style.taskText}>
                 <div className={style.taskCheckbox} >
-                    <input id={el.id} 
-                        key={el.id} 
-                        onChange={this.taskDone}                        
+                    <Input 
                         type='checkbox'
-                        checked={el.done ? true : false}
-                    />
+                        onChange={this.taskDone}
+                        id={el.id}
+                        key={el.id}
+                        checked={el.done ? true : false}/>
                 </div>
                 {el.text}
             </div>
@@ -94,21 +96,21 @@ class TaskList extends React.Component {
         return (
             <div>
                 <div className="header">
-                    <input type="checkbox" 
-                        id="check2" 
+                    <Input 
+                        type="checkbox"
                         onClick={this.showDoneTask}
-                        />
-                        <label>Show done</label>
-                    <input type="text"
+                        label={'Show done'}/>
+                    <Input 
+                        type="text"
                         onChange={this.onChangeSearch}
                         placeholder="Поиск" />
                     <button onClick={this.searchTask}>Search</button>
                     <button onClick={this.cancelSearch}>Cancel Search</button>
-                    <input type="text" 
-                        onChange={this.onChangeNewTaskName} 
-                        value={this.state.newTaskName}
-                        placeholder="Введите название задачи"
-                        />
+                    <Input 
+                        type="text"
+                        onChange={this.onChangeNewTaskName}
+                        placeholder="Введите название задачи" 
+                        value={this.state.newTaskName}/>
                     <button onClick={this.addNewTask}>Add</button>
                 </div>
                 <div className="task-list">
