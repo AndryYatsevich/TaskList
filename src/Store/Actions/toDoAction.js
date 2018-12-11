@@ -10,7 +10,7 @@ export const getAllTasks = () => (dispatch) => {
         return response.text().then((tasks) => {
             dispatch({
                 type: constants.GET_ALL_TASKS,
-                payload: tasks
+                payload: JSON.parse(tasks)
             });
         });
     })
@@ -40,13 +40,14 @@ export const addNewTask = (task) => (dispatch) => {
             },
             body: task
         }).then((response) => {
-            return response.text().then((task) => {                            
+            return response.text().then((task) => {
                 dispatch({
                     type: constants.ADD_NEW_TASK,
-                    payload: task
+                    payload: JSON.parse(task)
                 });
             });
-        })
+        }
+    )
 }
 
 export const deleteTask = (taskId) => (dispatch) => {
@@ -60,8 +61,8 @@ export const deleteTask = (taskId) => (dispatch) => {
                 type: constants.DELETE_TASK,
                 payload: taskId
             });
-        })
-    
+        }
+    )    
 }
 
 export const updateTask = (id, task) => (dispatch) => {
@@ -78,6 +79,6 @@ export const updateTask = (id, task) => (dispatch) => {
                     payload: task
                 });   
             });
-        });
-    
+        }
+    );    
 }

@@ -1,3 +1,34 @@
 .input-wrap {
     display: inline-block;
 }
+
+.input {
+    padding: 5px 10px;
+    border: none;
+    margin: 5px 10px;
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+    text-color: #CFE8C5;
+    font-weight: bold;
+}
+
+input::-webkit-input-placeholder {
+    color: #CFE8C5;
+    font-size: 16px;
+}
+
+input:focus::-webkit-input-placeholder {
+    color: transparent;
+    font-size: 30px;
+    transition: 1s;
+}
+
+.input:focus {
+    outline:none;
+    border-bottom: 2px solid #D7DF7C;
+}
+
+.label {
+    margin: 5px;
+    font-size: 18px;
+}

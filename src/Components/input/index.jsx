@@ -5,18 +5,18 @@ class Input extends React.Component {
 
     render () {
         const {onChange, type, placeholder, value, label, onClick, id, key, checked} = this.props;
-        console.log('type', type);
         return <div className={style.inputWrap}>
-                <input 
-                onChange={onChange} 
-                type={type}
-                placeholder={placeholder}
-                value={value}
-                onClick={onClick}
-                id={id}
-                key={key}
-                checked={checked}></input>
-                {type==='checkbox' ? <label>{label}</label> : ''}
+                    <input 
+                        className={style.input}
+                        onChange={onChange} 
+                        type={type}
+                        placeholder={placeholder}
+                        value={value}
+                        onClick={onClick}
+                        id={id}
+                        key={key}
+                        checked={checked} />
+                    {type==='checkbox' ? <label className={style.label}>{label}</label> : ''}
             </div>
     }
 }

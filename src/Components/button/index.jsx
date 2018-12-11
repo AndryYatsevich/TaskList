@@ -1,0 +1,17 @@
+import React from 'react';
+import style from './style.styl';
+
+class Button extends React.Component { 
+
+    render () {
+        const {onClick, label, id} = this.props;
+        return <button 
+                    id={id}
+                    className={style.button}
+                    onClick={onClick}>
+                    {label}
+                </button>            
+    }
+}
+
+export default Button;
