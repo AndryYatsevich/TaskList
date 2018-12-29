@@ -4,14 +4,17 @@ import {connect} from 'react-redux';
 import style from './style.styl';
 import Input from '../../Components/input';
 import Button from '../../Components/button';
+import Modal from '../../Components/modal';
 
 class TaskList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            newTaskName: null,
+            taskName: null,
             search: null,
-            showDoneTask: false
+            showDoneTask: false,
+            showModal: false,
+            showDeleteModal: false
         }
     }
 
@@ -19,9 +22,37 @@ class TaskList extends React.Component {
         this.props.getAllTasks();
     }
 
-    onChangeNewTaskName = (e) => {
+    showModal = (e) => {
         this.setState({
-            newTaskName: e.target.value
+            showModal: true,
+            idTaskForModal: e.target.id
+        })
+    }
+
+    closeModal = () => {
+        this.setState({
+            showModal: false
+        })
+    }
+
+    showDeleteModal = (e) => {
+        this.setState({
+            showDeleteModal: true,
+            idCategoryForModal: e.target.id
+        })
+    }
+
+    closeDeleteModal = () => {
+        this.setState({
+            showDeleteModal: false
+        })
+    }
+
+
+
+    onChangeTaskName = (e) => {
+        this.setState({
+            taskName: e.target.value
         });
     }
 
@@ -31,8 +62,8 @@ class TaskList extends React.Component {
         });
     }
 
-    searchTask = async() => {
-        this.props.getSearchTasks(this.state.search, this.state.showDoneTask);   
+    searchTask = () => {
+        this.props.getSearchTasks(this.state.search, this.state.showDoneTask);
     }
 
     cancelSearch = () => {
@@ -41,11 +72,11 @@ class TaskList extends React.Component {
 
     addNewTask = () => {
         let task = JSON.stringify({
-            text: this.state.newTaskName
+            text: this.state.taskName
         })
         this.props.addNewTask(task);
         this.setState({
-            newTaskName: ''
+            taskName: ''
         });
     }
 
@@ -55,8 +86,84 @@ class TaskList extends React.Component {
         this.props.updateTask(e.target.id, JSON.stringify(currentTask[0]));
     }
 
-    deleteTask = (e) => {
-        this.props.deleteTask(e.target.id);
+    deleteTask = (id) => {
+        this.props.deleteTask(id);
+        this.closeDeleteModal();
+    }
+
+    saveChange = (id) => {
+        let chengedTask = {
+            done: false,
+            text: this.state.taskName
+        }
+        this.props.updateTask(id, JSON.stringify(chengedTask));
+        this.setState({
+            showModal: false
+        })
+    }
+
+    /**
+     * Модалка подтверждения удаления
+     */
+    renderModalDeleteBody = () => {
+        return (<div className={style.modal}>
+            <div className={style.modalCaption}>
+                <h3>Удаление задачи: </h3>
+            </div>
+            <div className={style.modalBody}>
+                <div className={style.modalItem}>
+                    Вы дествительно хотите удалить эту задачу?
+                </div>
+            </div>
+            <div className={style.modalFooter}>
+                <Button 
+                    modify={'danger'}
+                    label={'Удалить'}
+                    onClick={() => this.deleteTask(this.state.idCategoryForModal)}/>
+                <Button 
+                    label={'Отмена'}
+                    onClick={() => this.closeDeleteModal()}/>
+            </div>
+        </div>)
+    }
+
+    /**
+     * Модалка редактирования
+     */
+    renderModalBody = () => {
+        let currentTask = this.props.tasks.filter((el) => el.id == this.state.idTaskForModal);
+        return (<div>
+            <div>
+                {currentTask && currentTask.map((el) => {
+                    return (<div className={style.modal}>
+                        <div className={style.modalCaption}>
+                            <h3>Редактирование задачи: </h3>
+                        </div>
+                        <div className={style.modalBody}>
+                            <div className={style.modalItem}>
+                                <Input 
+                                    defaultValue={el.text}
+                                    onChange={this.onChangeTaskName}/>
+                            </div>
+                            <div className={style.modalItem}>
+                                <Input 
+                                    type='checkbox'
+                                    onChange={this.taskDone}
+                                    label={'Is Done'}
+                                    id={el.id}
+                                    key={el.id}
+                                    checked={el.done ? true : false}/>
+                            </div>
+                        </div>
+                        <div className={style.modalFooter}>
+                            <Button 
+                                label={'Сохранить изменения'}
+                                onClick={() => this.saveChange(el.id)}/>
+                        </div>
+                        </div>)
+                })}
+            </div>
+            </div>)
     }
 
     renderListItem = (el) => {
@@ -76,11 +183,14 @@ class TaskList extends React.Component {
             {!el.done ? 
                 <div className={style.taskBtn}>
                     <Button 
-                        label={'Редактировать'}/>
+                        label={'Редактировать'}
+                        id={el.id}
+                        onClick={(e) => this.showModal(e)}/>
                     <Button 
+                        modify={'danger'}
                         label={'Удалить'}
                         id={el.id}
-                        onClick={this.deleteTask}/>
+                        onClick={(e) => this.showDeleteModal(e)}/>
                 </div> :
             ''
             }
@@ -116,9 +226,9 @@ class TaskList extends React.Component {
                         onClick={this.cancelSearch}/>
                     <Input 
                         type="text"
-                        onChange={this.onChangeNewTaskName}
+                        onChange={this.onChangeTaskName}
                         placeholder="Введите название задачи" 
-                        value={this.state.newTaskName}/>
+                        value={this.state.taskName}/>
                     <Button 
                         label={'Add'}
                         onClick={this.addNewTask}/>
@@ -133,6 +243,8 @@ class TaskList extends React.Component {
                     })}
                     </ul>
                 </div>
+                {this.state.showModal && <Modal closeModal={this.closeModal} modalBody={this.renderModalBody}/>}
+                {this.state.showDeleteModal && <Modal closeModal={this.closeDeleteModal} modalBody={this.renderModalDeleteBody}/>}
             </div>
         )
     }

@@ -26,7 +26,7 @@ export const getSearchTasks = (name, done) => (dispatch) => {
         return response.text().then((tasks) => {
             dispatch({
                 type: constants.GET_ALL_TASKS,
-                payload: tasks
+                payload: JSON.parse(tasks)
             });
         });
     })
@@ -76,7 +76,7 @@ export const updateTask = (id, task) => (dispatch) => {
             return response.text().then((task) => {     
                 dispatch({
                     type: constants.UPDATE_TASK,
-                    payload: task
+                    payload: JSON.parse(task)
                 });   
             });
         }
