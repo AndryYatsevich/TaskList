@@ -5,6 +5,10 @@ import style from './style.styl';
 import Input from '../../Components/input';
 import Button from '../../Components/button';
 import Modal from '../../Components/modal';
+import ModalDelete from '../../Components/modalDelete';
+import ModalEditTask from '../../Components/modalEditTask';
+import Task from '../../Components/task';
+import HeaderTask from '../../Components/headerTask';
 
 class TaskList extends React.Component {
     constructor(props) {
@@ -25,7 +29,7 @@ class TaskList extends React.Component {
     showModal = (e) => {
         this.setState({
             showModal: true,
-            idTaskForModal: e.target.id
+            taskId: e.target.id
         })
     }
 
@@ -38,7 +42,7 @@ class TaskList extends React.Component {
     showDeleteModal = (e) => {
         this.setState({
             showDeleteModal: true,
-            idCategoryForModal: e.target.id
+            taskId: e.target.id
         })
     }
 
@@ -47,8 +51,6 @@ class TaskList extends React.Component {
             showDeleteModal: false
         })
     }
-
-
 
     onChangeTaskName = (e) => {
         this.setState({
@@ -102,149 +104,59 @@ class TaskList extends React.Component {
         })
     }
 
-    /**
-     * Модалка подтверждения удаления
-     */
-    renderModalDeleteBody = () => {
-        return (<div className={style.modal}>
-            <div className={style.modalCaption}>
-                <h3>Удаление задачи: </h3>
-            </div>
-            <div className={style.modalBody}>
-                <div className={style.modalItem}>
-                    Вы дествительно хотите удалить эту задачу?
-                </div>
-            </div>
-            <div className={style.modalFooter}>
-                <Button 
-                    modify={'danger'}
-                    label={'Удалить'}
-                    onClick={() => this.deleteTask(this.state.idCategoryForModal)}/>
-                <Button 
-                    label={'Отмена'}
-                    onClick={() => this.closeDeleteModal()}/>
-            </div>
-        </div>)
-    }
-
-    /**
-     * Модалка редактирования
-     */
-    renderModalBody = () => {
-        let currentTask = this.props.tasks.filter((el) => el.id == this.state.idTaskForModal);
-        return (<div>
-            <div>
-                {currentTask && currentTask.map((el) => {
-                    return (<div className={style.modal}>
-                        <div className={style.modalCaption}>
-                            <h3>Редактирование задачи: </h3>
-                        </div>
-                        <div className={style.modalBody}>
-                            <div className={style.modalItem}>
-                                <Input 
-                                    defaultValue={el.text}
-                                    onChange={this.onChangeTaskName}/>
-                            </div>
-                            <div className={style.modalItem}>
-                                <Input 
-                                    type='checkbox'
-                                    onChange={this.taskDone}
-                                    label={'Is Done'}
-                                    id={el.id}
-                                    key={el.id}
-                                    checked={el.done ? true : false}/>
-                            </div>
-                        </div>
-                        <div className={style.modalFooter}>
-                            <Button 
-                                label={'Сохранить изменения'}
-                                onClick={() => this.saveChange(el.id)}/>
-                        </div>
-                        </div>)
-                })}
-            </div>
-            </div>)
-    }
-
-    renderListItem = (el) => {
-        return (<li key={el.id} className={el.done? style.done : ''}>
-        <div className={style.listItem}>
-            <div className={style.taskText}>
-                <div className={style.taskCheckbox} >
-                    <Input 
-                        type='checkbox'
-                        onChange={this.taskDone}
-                        id={el.id}
-                        key={el.id}
-                        checked={el.done ? true : false}/>
-                </div>
-                {el.text}
-            </div>
-            {!el.done ? 
-                <div className={style.taskBtn}>
-                    <Button 
-                        label={'Редактировать'}
-                        id={el.id}
-                        onClick={(e) => this.showModal(e)}/>
-                    <Button 
-                        modify={'danger'}
-                        label={'Удалить'}
-                        id={el.id}
-                        onClick={(e) => this.showDeleteModal(e)}/>
-                </div> :
-            ''
-            }
-            
-        </div>
-    </li>)
-    }
-
     showDoneTask = () => {
         this.setState({
             showDoneTask: !this.state.showDoneTask
         })
     }
 
-
     render () {
         return (
             <div>
-                <div className="header">
-                    <Input 
-                        type="checkbox"
-                        onClick={this.showDoneTask}
-                        label={'Show done'}/>
-                    <Input 
-                        type="text"
-                        onChange={this.onChangeSearch}
-                        placeholder="Поиск" />
-                    <Button 
-                        label={'Search'}
-                        onClick={this.searchTask}/>
-                    <Button 
-                        label={'Cancel Search'}
-                        onClick={this.cancelSearch}/>
-                    <Input 
-                        type="text"
-                        onChange={this.onChangeTaskName}
-                        placeholder="Введите название задачи" 
-                        value={this.state.taskName}/>
-                    <Button 
-                        label={'Add'}
-                        onClick={this.addNewTask}/>
-                </div>
+                <HeaderTask
+                    showDoneTask={this.showDoneTask}
+                    onChangeSearch={this.onChangeSearch}
+                    searchTask={this.searchTask}
+                    cancelSearch={this.cancelSearch}
+                    onChangeTaskName={this.onChangeTaskName}
+                    addNewTask={this.addNewTask}
+                    taskName={this.state.taskName}/>
                 <div className="task-list">
                     <ul>
                         {this.props.tasks && this.state.showDoneTask ? 
-                            this.props.tasks.filter((el)=> el.done).map((el) => {
-                                return this.renderListItem(el);
+                            this.props.tasks.filter((el)=> !el.done).map((el) => {
+                                return <Task 
+                                    task={el}
+                                    showModal={this.showModal}
+                                    showDeleteModal={this.showDeleteModal}
+                                    taskDone={this.taskDone}/>;
                         }) : this.props.tasks.map((el) => {
-                                return this.renderListItem(el);
+                            return <Task 
+                                task={el}
+                                showModal={this.showModal}
+                                showDeleteModal={this.showDeleteModal}
+                                taskDone={this.taskDone}/>;
                     })}
                     </ul>
                 </div>
-                {this.state.showModal && <Modal closeModal={this.closeModal} modalBody={this.renderModalBody}/>}
-                {this.state.showDeleteModal && <Modal closeModal={this.closeDeleteModal} modalBody={this.renderModalDeleteBody}/>}
+                {this.state.showModal && 
+                    <Modal closeModal={this.closeModal}>
+                        <ModalEditTask
+                            saveChange={this.saveChange}
+                            tasks={this.props.tasks}
+                            onChangeTaskName={this.onChangeTaskName}
+                            taskDone={this.taskDone}
+                            taskId={this.state.taskId}
+                        />
+                    </Modal>}
+                {this.state.showDeleteModal && 
+                    <Modal closeModal={this.closeDeleteModal}>
+                        <ModalDelete
+                            modalText={'Вы дествительно хотите удалить эту задачу?'}
+                            closeDeleteModal={this.closeDeleteModal}
+                            deleteItem={this.deleteTask}
+                            idItem={this.state.taskId}/>
+                    </Modal>}
             </div>
         )
     }

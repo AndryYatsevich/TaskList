@@ -1,4 +1,4 @@
-import constants from '../constants';
+import constants from '../Constants/categoriesConstants';
 
 export const getCategory = () => (dispatch) => {
     fetch('http://localhost:3000/category', {

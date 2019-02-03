@@ -1,4 +1,4 @@
-import constants from '../constants';
+import constants from '../Constants/toDoConstants';
 
 export const getAllTasks = () => (dispatch) => {
     fetch('http://localhost:3000/task', {

@@ -10,10 +10,11 @@ class Modal extends React.Component {
     }
 
     render () {
-        const {closeModal, modalBody} = this.props;
+        const {closeModal, children} = this.props;
+        console.log(this.props);
         return <div className={style.modal} onClick={closeModal}>
                     <div className={style.modalBody} onClick={(e) => this.click(e)}>
-                        {modalBody()}
+                        {children}
                     </div>
             </div>
     }

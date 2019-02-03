@@ -5,6 +5,8 @@ import style from './style.styl';
 import Input from '../../Components/input';
 import Button from '../../Components/button';
 import Modal from '../../Components/modal';
+import ModalDelete from '../../Components/modalDelete';
+import ModalEditCategory from '../../Components/modalEditCategory';
 
 class Category extends React.Component {
     constructor(props) {
@@ -13,7 +15,7 @@ class Category extends React.Component {
             newCategoryName: null,
             newSubCategoryName: null,
             showModal: false,
-            idCategoryForModal: null,
+            categoryId: null,
             showDeletModal: false
         }
     }
@@ -37,7 +39,7 @@ class Category extends React.Component {
     showModal = (e) => {
         this.setState({
             showModal: true,
-            idCategoryForModal: e.target.id
+            categoryId: e.target.id
         })
     }
 
@@ -48,9 +50,10 @@ class Category extends React.Component {
     }
 
     showDeleteModal = (e) => {
+        console.log(e.target.id);
         this.setState({
             showDeleteModal: true,
-            idCategoryForModal: e.target.id
+            categoryId: e.target.id
         })
     }
 
@@ -73,7 +76,7 @@ class Category extends React.Component {
     addNewSubCategory = () => {
         const newCategory = JSON.stringify({
             name: this.state.newSubCategoryName,
-            parentId: Number(this.state.idCategoryForModal)
+            parentId: Number(this.state.categoryId)
         })
         this.props.addNewCategory(newCategory);
         this.closeModal();
@@ -136,62 +139,6 @@ class Category extends React.Component {
             </div>
         }
     )
-
-    /**
-     * Модалка подтверждения удаления
-     */
-    renderModalDeleteBody = () => {
-        return (<div className={style.modal}>
-            <div className={style.modalCaption}>
-                <h3>Удаление категории: </h3>
-            </div>
-            <div className={style.modalBody}>
-                <div className={style.modalItem}>
-                    Вы дествительно хотите удалить эту Категорию?
-                </div>
-            </div>
-            <div className={style.modalFooter}>
-                <Button 
-                    modify={'danger'}
-                    label={'Удалить'}
-                    onClick={() => this.deleteCategory(this.state.idCategoryForModal)}/>
-                <Button 
-                    label={'Отмена'}
-                    onClick={() => this.closeDeleteModal()}/>
-            </div>
-        </div>)
-    }
-    /**
-     * Модалка редактирования
-     */
-
-    renderModalBody = () => {
-        let currentCategory = this.props.category.filter((el) => el.id == this.state.idCategoryForModal);
-        return (<div>
-            <div>
-                {currentCategory && currentCategory.map((el) => {
-                    return (<div className={style.modal}>
-                            <div className={style.modalCaption}>
-                                <h3>Добавление новой подкатегории: </h3>
-                            </div>
-                            <div className={style.modalBody}>
-                                <div className={style.modalItem}>
-                                    <Input 
-                                        placeholder={'Введите название'}
-                                        defaultValue={el.text}
-                                        onChange={this.onChangeSubCategoryName}/>
-                                </div>
-                            </div>
-                            <div className={style.modalFooter}>
-                                <Button 
-                                    label={'Добавить'}
-                                    onClick={() => this.addNewSubCategory()}/>
-                            </div>
-                        </div>)
-                })}
-            </div>
-        </div>)
-    }
     
     render () {
         const {category} = this.props;
@@ -210,8 +157,22 @@ class Category extends React.Component {
                 <div className={style.categoryList}>
                     {this.renderCategory(category)}
                 </div>
-                {this.state.showModal && <Modal closeModal={this.closeModal} modalBody={this.renderModalBody}/>}
-                {this.state.showDeleteModal && <Modal closeModal={this.closeDeleteModal} modalBody={this.renderModalDeleteBody}/>}
+                {this.state.showModal && 
+                    <Modal closeModal={this.closeModal} modalBody={this.renderModalBody}>
+                        <ModalEditCategory
+                            addNewSubCategory={this.addNewSubCategory}
+                            onChangeSubCategoryName={this.onChangeSubCategoryName}
+                            categoryId={this.state.categoryId}
+                            category={this.props.category}/>
+                    </Modal>}
+                {this.state.showDeleteModal && 
+                <Modal closeModal={this.closeDeleteModal} modalBody={this.renderModalDeleteBody}>
+                    <ModalDelete
+                        modalText={'Вы дествительно хотите удалить эту Категорию?'}
+                        closeDeleteModal={this.closeDeleteModal}
+                        deleteItem={this.deleteCategory}
+                        idItem={this.state.categoryId}/>
+                </Modal>}
             </div>
         )
     }
